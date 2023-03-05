@@ -44,6 +44,8 @@ public class BirtReportGenerator {
         } else {
             options = new HTMLRenderOption();
             ((HTMLRenderOption) options).setEmbeddable(true);
+            ((HTMLRenderOption) options).setImageDirectory("./chart");
+            ((HTMLRenderOption) options).setBaseImageURL("https://app.alohub.vn:6666/");
         }
         options.setOutputFormat(rptParam.getFormat().toLowerCase());
         options.setOutputStream(baos);

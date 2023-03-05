@@ -31,7 +31,7 @@ import java.util.*;
 @RequestMapping(value = Constant.REQUEST_MAPPING_V1)
 public class ReportController {
 
-    private Logger logger = LoggerFactory.getLogger(ReportController.class);
+    private final Logger logger = LoggerFactory.getLogger(ReportController.class);
 
     @Autowired
     BirtReportGenerator birtReportGenerator;
@@ -46,6 +46,7 @@ public class ReportController {
             @PathVariable("reportName") String reportName,
             @RequestBody Map<String, Object> maps) throws Exception {
 
+        logger.info("Get data from report " + reportName);
         try {
             String sourceFile = FilterUtil.fileNameFilter(reportName) + ".rptdesign";
             String tempFilePath = System.getProperty("user.dir") + File.separator + "template" + File.separator + sourceFile;
@@ -68,8 +69,8 @@ public class ReportController {
             messEntity.setDescription("");
 
             if ("html".equalsIgnoreCase(type) && hasPaging) {
-                int count = birtReportGenerator.getCountData(rm);
-                responseEntity.setData(count);
+//                int count = birtReportGenerator.getCountData(rm);
+//                responseEntity.setData(count);
             }
             if ("xlsx".equalsIgnoreCase(type)) {
                 if (rm.getParameter().containsKey("pagesize") && rm.getParameter().get("pagesize") != null) {
