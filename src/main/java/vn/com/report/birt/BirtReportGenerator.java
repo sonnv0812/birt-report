@@ -5,6 +5,7 @@ import org.eclipse.birt.report.engine.api.impl.ReportRunnable;
 import org.eclipse.birt.report.model.api.OdaDataSetHandle;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import vn.com.report.repository.ReportRepositoryCustom;
 
@@ -26,6 +27,9 @@ public class BirtReportGenerator {
     @Autowired
     private ReportRepositoryCustom reportRepository;
 
+    @Value("${chart-file-path}")
+    String chartFilePath;
+
     public ByteArrayOutputStream generate(ReportParameter rptParam) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         FileInputStream fis = new FileInputStream(rptParam.getReportPath());
@@ -44,8 +48,8 @@ public class BirtReportGenerator {
         } else {
             options = new HTMLRenderOption();
             ((HTMLRenderOption) options).setEmbeddable(true);
-            ((HTMLRenderOption) options).setImageDirectory("./chart");
-            ((HTMLRenderOption) options).setBaseImageURL("https://app.alohub.vn:6666/");
+            ((HTMLRenderOption) options).setImageDirectory(chartFilePath);
+            options.setEmitterID("org.eclipse.birt.report.engine.emitter.html");
         }
         options.setOutputFormat(rptParam.getFormat().toLowerCase());
         options.setOutputStream(baos);
@@ -82,32 +86,10 @@ public class BirtReportGenerator {
             }
         }
         HashMap<String, Object> hmapParams = (HashMap<String, Object>) ((HashMap<String, Object>) rptParam.getParameter()).clone();
-        hmapParams.remove("isHideTableTitle");
-        hmapParams.remove("language");
-        hmapParams.remove("toTimeString");
-        hmapParams.remove("fromTimeString");
-        if(hmapParams.containsKey("startrecord"))
-            hmapParams.put("startrecord", null);
-        if(hmapParams.containsKey("pagesize"))
-            hmapParams.put("pagesize", null);
-
-        // remove param to view in birt
-        hmapParams.remove("USER_NAME");
-        hmapParams.remove("VIEW_FROM_DATE");
-        hmapParams.remove("VIEW_TO_DATE");
-        hmapParams.remove("VIEW_LST_QUEUE");
-        hmapParams.remove("VIEW_PERIOD");
-        hmapParams.remove("VIEW_LINE");
-        hmapParams.remove("VIEW_LST_AGENT");
-        hmapParams.remove("VIEW_LINE");
-        hmapParams.remove("VIEW_TICKET_TYPE");
-        hmapParams.remove("VIEW_LSTAGENT");
-        hmapParams.remove("VIEW_SOURCE_NAME");
-        hmapParams.remove("lstSourceName");
-        hmapParams.remove("channelName");
-        hmapParams.remove("username");
-        hmapParams.remove("rankName");
-        hmapParams.remove("menuName");
+        if (hmapParams.containsKey("pagesize")) {
+            hmapParams.put("pagesize", Integer.MAX_VALUE);
+            hmapParams.put("page", null);
+        }
         fis.close();
         return reportRepository.getTotal(queryString, hmapParams);
     }

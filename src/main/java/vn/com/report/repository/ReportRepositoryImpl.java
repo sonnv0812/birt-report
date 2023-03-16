@@ -1,5 +1,7 @@
 package vn.com.report.repository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -12,6 +14,8 @@ public class ReportRepositoryImpl implements ReportRepositoryCustom {
 
     @PersistenceContext(unitName = "default")
     private EntityManager entityManager;
+
+    private final Logger logger = LoggerFactory.getLogger(ReportRepositoryImpl.class);
 
     @Override
     public int getTotal(String queryString, HashMap<String, Object> hmapParams) {
@@ -57,7 +61,7 @@ public class ReportRepositoryImpl implements ReportRepositoryCustom {
                 return 0;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
         return 0;
     }

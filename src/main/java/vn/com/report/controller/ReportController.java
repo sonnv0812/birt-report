@@ -69,8 +69,8 @@ public class ReportController {
             messEntity.setDescription("");
 
             if ("html".equalsIgnoreCase(type) && hasPaging) {
-//                int count = birtReportGenerator.getCountData(rm);
-//                responseEntity.setData(count);
+                int count = birtReportGenerator.getCountData(rm);
+                responseEntity.setData(count);
             }
             if ("xlsx".equalsIgnoreCase(type)) {
                 if (rm.getParameter().containsKey("pagesize") && rm.getParameter().get("pagesize") != null) {
